@@ -1,0 +1,32 @@
+# Logs
+*.log
+
+# Data/state files
+messaged.txt
+failed.txt
+failed_backup.txt
+failed_backup_*.txt
+conversations.txt
+leads_report.txt
+bot_output.log
+orchestrator_output.log
+
+# Lock files
+.locks/
+
+# Environment
+.env
+../.env
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
