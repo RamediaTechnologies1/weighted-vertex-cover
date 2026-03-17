@@ -1,0 +1,303 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* ============================================
+   DESIGN SYSTEM — Clean Theme with Dark Mode
+   Stripe meets Linear meets Citizen
+   ============================================ */
+
+:root {
+  --radius: 0.375rem; /* 6px max */
+
+  --background: #FAFAFA;
+  --foreground: #111111;
+  --card: #FFFFFF;
+  --card-foreground: #111111;
+  --popover: #FFFFFF;
+  --popover-foreground: #111111;
+  --primary: #00539F;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #111111;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  --accent: #EFF6FF;
+  --accent-foreground: #00539F;
+  --destructive: #DC2626;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #00539F;
+  --chart-1: #00539F;
+  --chart-2: #6B7280;
+  --chart-3: #9CA3AF;
+  --chart-4: #D1D5DB;
+  --chart-5: #DC2626;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #00539F;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EFF6FF;
+  --sidebar-accent-foreground: #00539F;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #00539F;
+
+  /* Design tokens */
+  --bg-primary: #FAFAFA;
+  --bg-card: #FFFFFF;
+  --bg-hover: #F3F4F6;
+  --bg-active: #EFF6FF;
+  --text-primary: #111111;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --accent-color: #00539F;
+  --accent-light: #EFF6FF;
+  --border-default: #E5E7EB;
+  --border-strong: #D1D5DB;
+  --priority-critical: #DC2626;
+  --priority-high: #F59E0B;
+  --priority-medium: #00539F;
+  --priority-low: #10B981;
+  --status-submitted: #6B7280;
+  --status-assigned: #F59E0B;
+  --status-in-progress: #00539F;
+  --status-resolved: #10B981;
+}
+
+.dark {
+  --background: #0A0A0B;
+  --foreground: #E5E7EB;
+  --card: #141415;
+  --card-foreground: #E5E7EB;
+  --popover: #141415;
+  --popover-foreground: #E5E7EB;
+  --primary: #3B82F6;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1C1C1E;
+  --secondary-foreground: #E5E7EB;
+  --muted: #1C1C1E;
+  --muted-foreground: #9CA3AF;
+  --accent: #1E293B;
+  --accent-foreground: #60A5FA;
+  --destructive: #EF4444;
+  --border: #262626;
+  --input: #262626;
+  --ring: #3B82F6;
+  --chart-1: #3B82F6;
+  --chart-2: #9CA3AF;
+  --chart-3: #6B7280;
+  --chart-4: #4B5563;
+  --chart-5: #EF4444;
+  --sidebar: #141415;
+  --sidebar-foreground: #E5E7EB;
+  --sidebar-primary: #3B82F6;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1E293B;
+  --sidebar-accent-foreground: #60A5FA;
+  --sidebar-border: #262626;
+  --sidebar-ring: #3B82F6;
+
+  --bg-primary: #0A0A0B;
+  --bg-card: #141415;
+  --bg-hover: #1C1C1E;
+  --bg-active: #1E293B;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --text-tertiary: #6B7280;
+  --accent-color: #3B82F6;
+  --accent-light: #1E293B;
+  --border-default: #262626;
+  --border-strong: #3F3F46;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+}
+
+/* ============================================
+   PRIORITY STRIPS (left border)
+   ============================================ */
+.priority-strip-critical { border-left: 3px solid var(--priority-critical); }
+.priority-strip-high { border-left: 3px solid var(--priority-high); }
+.priority-strip-medium { border-left: 3px solid var(--priority-medium); }
+.priority-strip-low { border-left: 3px solid var(--priority-low); }
+
+/* ============================================
+   SKELETON LOADERS
+   ============================================ */
+.skeleton-pulse {
+  background: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+.dark .skeleton-pulse {
+  background: linear-gradient(90deg, #262626 25%, #1C1C1E 50%, #262626 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================
+   INTERACTIONS
+   ============================================ */
+.hover-row {
+  transition: background-color 150ms ease;
+}
+.hover-row:hover {
+  background-color: #F9FAFB;
+}
+.dark .hover-row:hover {
+  background-color: #1C1C1E;
+}
+
+.hover-card {
+  transition: border-color 150ms ease;
+}
+.hover-card:hover {
+  border-color: #D1D5DB;
+}
+.dark .hover-card:hover {
+  border-color: #3F3F46;
+}
+
+/* ============================================
+   FOCUS STATES
+   ============================================ */
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid #00539F !important;
+  outline-offset: 2px !important;
+  border-color: #00539F !important;
+  box-shadow: none !important;
+}
+.dark input:focus, .dark textarea:focus, .dark select:focus {
+  outline-color: #3B82F6 !important;
+  border-color: #3B82F6 !important;
+}
+
+/* ============================================
+   MAP CONTAINER
+   ============================================ */
+.map-container {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+}
+.dark .map-container {
+  border-color: #262626;
+}
+
+/* ============================================
+   SCROLLBAR (subtle)
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAFAFA;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #0A0A0B;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3F3F46;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6B7280;
+}
+
+/* ============================================
+   SLIDE-OVER PANEL
+   ============================================ */
+.slide-over {
+  box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+}
+.dark .slide-over {
+  box-shadow: -4px 0 12px rgba(0,0,0,0.4);
+}
+
+/* ============================================
+   LEAFLET POPUP OVERRIDE
+   ============================================ */
+.leaflet-popup-content-wrapper {
+  border-radius: 6px !important;
+  border: 1px solid #E5E7EB !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  background: #FFFFFF !important;
+  color: #111111 !important;
+}
+.dark .leaflet-popup-content-wrapper {
+  border-color: #262626 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+  background: #141415 !important;
+  color: #E5E7EB !important;
+}
+
+.leaflet-popup-tip {
+  background: #FFFFFF !important;
+  border: 1px solid #E5E7EB !important;
+}
+.dark .leaflet-popup-tip {
+  background: #141415 !important;
+  border-color: #262626 !important;
+}

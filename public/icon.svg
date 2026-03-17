@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="108" fill="#1a1410"/>
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#grad)" opacity="0.3"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#c8a55c" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#1a1410" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Wrench icon -->
+  <g transform="translate(256, 256) scale(1)" stroke="#c8a55c" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M-60 60 L60-60" />
+    <path d="M30-90 C80-90 110-60 110-10 L60-10 60-60 30-90Z" fill="#c8a55c" stroke="#c8a55c"/>
+    <path d="M-40 50 L-90 100 C-105 115 -105 140 -90 155 -75 170 -50 170 -35 155 L15 105Z" fill="#c8a55c" stroke="#c8a55c"/>
+  </g>
+</svg>
