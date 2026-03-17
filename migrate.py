@@ -120,6 +120,65 @@ def migrate_skipped(filepath: str, prospects: dict) -> None:
                 prospects[key].status = "closed"
 
 
+def migrate_engagement_history(analytics_file: str, source_dir: str) -> None:
+    """Migrate commented_posts, liked_posts, group_comments, posted_content to analytics.json."""
+    import json
+    files_to_migrate = {
+        "commented_posts.txt": "comment_posted",
+        "liked_posts.txt": "post_liked",
+        "group_comments.txt": "group_comment",
+        "posted_content.txt": "content_posted",
+    }
+    for filename, event_type in files_to_migrate.items():
+        filepath = os.path.join(source_dir, filename)
+        if not os.path.exists(filepath):
+            continue
+        with open(filepath) as f:
+            for line in f:
+                parts = line.strip().split("|")
+                if len(parts) >= 2:
+                    event = {
+                        "timestamp": parts[-1].strip(),
+                        "event_type": event_type,
+                        "prospect_name": "",
+                        "prospect_username": "",
+                        "result": "success",
+                        "priority": 4,
+                        "metadata": {"id": parts[0].strip(), "source": "migration"},
+                    }
+                    with open(analytics_file, "a") as af:
+                        af.write(json.dumps(event) + "\n")
+
+
+def migrate_engaged_profiles(filepath: str, prospects: dict) -> None:
+    if not os.path.exists(filepath):
+        return
+    with open(filepath) as f:
+        for line in f:
+            parts = line.strip().split("|")
+            if len(parts) >= 2:
+                key = parts[0].strip().lower()
+                if key in prospects:
+                    prospects[key].posts_commented += 1
+
+
+def migrate_joined_groups(filepath: str, data_dir: str) -> None:
+    """Migrate joined_groups.txt to data/groups.json."""
+    import json
+    if not os.path.exists(filepath):
+        return
+    groups = []
+    with open(filepath) as f:
+        for line in f:
+            parts = line.strip().split("|")
+            if len(parts) >= 2:
+                groups.append({"name": parts[0].strip(), "url": parts[1].strip(),
+                               "joined_at": parts[2].strip() if len(parts) > 2 else ""})
+    groups_path = os.path.join(data_dir, "groups.json")
+    with open(groups_path, "w") as f:
+        json.dump(groups, f, indent=2)
+
+
 def migrate_all(source_dir: str = None, output_path: str = None) -> dict:
     """Run full migration. Returns migrated prospects dict."""
     if source_dir is None:
@@ -136,6 +195,12 @@ def migrate_all(source_dir: str = None, output_path: str = None) -> dict:
     migrate_conversations(os.path.join(source_dir, "conversations.txt"), prospects)
     migrate_followups(os.path.join(source_dir, "followups.txt"), prospects)
     migrate_handoffs(os.path.join(source_dir, "handoff.txt"), prospects)
+
+    # Additional migrations
+    analytics_file = os.path.join(os.path.dirname(output_path), "analytics.json")
+    migrate_engagement_history(analytics_file, source_dir)
+    migrate_engaged_profiles(os.path.join(source_dir, "engaged_profiles.txt"), prospects)
+    migrate_joined_groups(os.path.join(source_dir, "joined_groups.txt"), os.path.dirname(output_path))
 
     template_src = os.path.join(source_dir, "message-template.txt")
     template_dst = os.path.join(BASE_DIR, "templates", "variant_a.txt")
