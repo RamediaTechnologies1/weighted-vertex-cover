@@ -10,7 +10,12 @@ class WarmupGenerator(BaseGenerator):
     def generate_tasks(self, queue, prospects, rate_limiter, **kwargs):
         now = datetime.now()
         for username, p in prospects.items():
-            if p.status not in ("active",) or p.pipeline_stage in ("done", "dm_ready", "dm_sent", "prospect_found"):
+            if p.status not in ("active",):
+                continue
+            # Fast-track: set initial stage based on classification
+            if p.pipeline_stage == "prospect_found" and p.classification in FAST_TRACK_STAGES:
+                p.pipeline_stage = FAST_TRACK_STAGES[p.classification]
+            if p.pipeline_stage in ("done", "dm_ready", "dm_sent", "prospect_found"):
                 continue
             stage_config = WARMUP_STAGES.get(p.pipeline_stage)
             if not stage_config:
