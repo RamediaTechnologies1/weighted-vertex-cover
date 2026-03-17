@@ -1,1 +1,0 @@
-Write a brief, warm greeting for {{NAME}}, a healthcare professional. Reference their work or expertise. One sentence, under 15 words. Be genuine and specific. Just the sentence, nothing else.
