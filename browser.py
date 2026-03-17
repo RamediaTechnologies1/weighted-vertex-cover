@@ -3,6 +3,7 @@ import subprocess
 import time
 import re
 from datetime import datetime
+from typing import Optional
 
 
 def _run_cmd(cmd: str) -> str:
@@ -53,7 +54,7 @@ class Browser:
         _run_cmd(f"docker exec openclaw clawdbot browser evaluate --fn '() => window.scrollBy(0, {pixels})'")
         time.sleep(wait)
 
-    def find_element(self, pattern: str, snapshot: str = None) -> str | None:
+    def find_element(self, pattern: str, snapshot: Optional[str] = None) -> Optional[str]:
         """Find first element ref matching regex pattern in snapshot."""
         if snapshot is None:
             snapshot = self.snapshot()
