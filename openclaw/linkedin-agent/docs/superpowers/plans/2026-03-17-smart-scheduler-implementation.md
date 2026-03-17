@@ -317,6 +317,7 @@ from datetime import datetime
 from enum import Enum
 import json
 import os
+import tempfile
 
 
 class TaskResult(Enum):
@@ -426,7 +427,6 @@ def load_prospects(path: str) -> dict:
 
 def save_prospects(prospects: dict, path: str) -> None:
     """Save prospects to JSON file atomically. Expects {username: Prospect}."""
-    import tempfile
     os.makedirs(os.path.dirname(path), exist_ok=True)
     raw = {k: prospect_to_dict(v) for k, v in prospects.items()}
     with tempfile.NamedTemporaryFile("w", dir=os.path.dirname(path), delete=False, suffix=".tmp") as f:
@@ -1538,7 +1538,7 @@ class Browser:
     def insert_text(self, ref: str, text: str, wait: float = 0.3) -> None:
         """Insert text using execCommand (appends without clearing field)."""
         escaped = text.replace("\\", "\\\\").replace("'", "\\'")
-        self._browser.evaluate(f"(el) => {{ el.focus(); document.execCommand('insertText', false, '{escaped}'); }}", ref)
+        self.evaluate(f"(el) => {{ el.focus(); document.execCommand('insertText', false, '{escaped}'); }}", ref)
         time.sleep(wait)
 
 
@@ -1594,12 +1594,14 @@ Port the action functions from the existing modules. Reference source:
 import os
 import re
 import time
+import tempfile
 from datetime import datetime
 from models import Task, TaskResult, Prospect
 from browser import Browser, AIAgent
 from healthcare import is_healthcare_professional
 from scoring import compute_engagement_score
 from config import WARMUP_STAGES, HUMAN_TEAM, TEMPLATES_DIR, KNOWLEDGE_FILE, BASE_DIR
+from reengage import REENGAGE_TEMPLATES
 
 
 class TaskExecutor:
@@ -1820,7 +1822,6 @@ class TaskExecutor:
         if not textbox_ref:
             return TaskResult.ELEMENT_NOT_FOUND
         self._browser.type_text(textbox_ref, followup_msg)
-        import time
         time.sleep(2)
         snapshot = self._browser.snapshot()
         send_ref = self._browser.find_element(r'button "Send" \[ref=(e\d+)\]', snapshot)
@@ -1908,7 +1909,6 @@ class TaskExecutor:
         if not textbox_ref:
             return TaskResult.ELEMENT_NOT_FOUND
         self._browser.type_text(textbox_ref, post_text)
-        import time
         time.sleep(2)
         snapshot = self._browser.snapshot()
         post_ref = self._browser.find_element(r'button "Post"[^[]*\[ref=(e\d+)\]', snapshot)
@@ -1923,7 +1923,6 @@ class TaskExecutor:
 
     def _reengage_dm(self, task: Task) -> TaskResult:
         """Re-engagement stages 2-4: send a re-engagement message."""
-        from reengage import REENGAGE_TEMPLATES
         username = task.prospect_username
         name = task.prospect_name
         first_name = name.split()[0]
@@ -1937,7 +1936,6 @@ class TaskExecutor:
         if not textbox_ref:
             return TaskResult.ELEMENT_NOT_FOUND
         self._browser.type_text(textbox_ref, message)
-        import time
         time.sleep(2)
         snapshot = self._browser.snapshot()
         send_ref = self._browser.find_element(r'button "Send" \[ref=(e\d+)\]', snapshot)
@@ -2288,7 +2286,7 @@ from datetime import datetime
 from config import (
     DATA_DIR, TEMPLATES_DIR, DAILY_LIMITS, PAUSE_BETWEEN_TASKS_RANGE,
     CONSECUTIVE_FAILURE_THRESHOLD, FAILURE_PAUSE_SECONDS, NOTIFY_EMAIL,
-    MAX_TASK_RETRIES, BASE_DIR,
+    MAX_TASK_RETRIES, BASE_DIR, WARMUP_STAGES,
 )
 from models import Task, TaskResult, load_prospects, save_prospects
 from task_queue import TaskQueue, RateLimiter
@@ -2418,7 +2416,6 @@ def main():
                     p.last_processed_at = datetime.now().isoformat()
 
                     # Advance pipeline stage
-                    from config import WARMUP_STAGES
                     if task.action_type in WARMUP_STAGES:
                         next_stage = WARMUP_STAGES[task.action_type].get("next")
                         if next_stage:
@@ -2770,7 +2767,7 @@ mv orchestrator.py linkedin_bot.py reply_handler.py warmup_engine.py post_engage
 - [ ] **Step 2: Commit**
 
 ```bash
-git add -A
+git add legacy/ -u orchestrator.py linkedin_bot.py reply_handler.py warmup_engine.py post_engager.py group_engager.py prospector.py content_poster.py scan_replies.py shared_lock.py
 git commit -m "chore: move legacy modules to legacy/ directory"
 ```
 
