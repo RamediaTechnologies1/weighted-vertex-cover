@@ -1,4 +1,4 @@
-import { PresetGraph } from './types';
+import type { PresetGraph } from './types';
 
 export const presetGraphs: PresetGraph[] = [
   {

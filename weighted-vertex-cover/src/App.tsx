@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { Graph, AlgorithmStep, EditorMode } from './types';
+import type { Graph, AlgorithmStep, EditorMode } from './types';
 import { runLocalRatio } from './algorithm';
 import { presetGraphs } from './presets';
 import GraphCanvas from './components/GraphCanvas';

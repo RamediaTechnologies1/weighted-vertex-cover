@@ -1,4 +1,4 @@
-import { Graph, AlgorithmStep, Vertex, Edge } from './types';
+import type { Graph, AlgorithmStep, Edge } from './types';
 
 function cloneGraph(graph: Graph): Graph {
   return {

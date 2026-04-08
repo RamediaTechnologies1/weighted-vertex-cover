@@ -3,7 +3,7 @@ import {
   Play, RotateCcw, ChevronRight, ChevronLeft, MousePointer2,
   Plus, Link, Trash2, Layers, Hexagon
 } from 'lucide-react';
-import { EditorMode, Graph } from '../types';
+import type { EditorMode, Graph } from '../types';
 import { presetGraphs } from '../presets';
 
 interface Props {

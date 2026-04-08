@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Graph, EditorMode } from '../types';
+import type { Graph, EditorMode } from '../types';
 
 interface Props {
   graph: Graph;

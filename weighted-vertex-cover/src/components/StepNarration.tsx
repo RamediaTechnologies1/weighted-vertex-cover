@@ -4,7 +4,7 @@ import {
   Circle, ArrowRight, Minus, CheckCircle2, EyeOff, Trophy,
   Sparkles
 } from 'lucide-react';
-import { AlgorithmStep } from '../types';
+import type { AlgorithmStep } from '../types';
 
 interface Props {
   steps: AlgorithmStep[];
