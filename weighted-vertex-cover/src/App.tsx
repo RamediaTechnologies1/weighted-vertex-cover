@@ -280,11 +280,13 @@ function App() {
           />
         </div>
 
-        <StepNarration
-          steps={steps}
-          currentStep={currentStep}
-          onStepClick={setCurrentStep}
-        />
+        {isRunning && (
+          <StepNarration
+            steps={steps}
+            currentStep={currentStep}
+            onStepClick={setCurrentStep}
+          />
+        )}
       </div>
     </div>
   );

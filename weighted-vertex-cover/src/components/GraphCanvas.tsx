@@ -109,10 +109,10 @@ export default function GraphCanvas({
   };
 
   const getEdgeStyle = (e: typeof graph.edges[0]) => {
-    if (e.active) return { stroke: '#e11d48', opacity: 1, width: 3.5, dash: '' };
-    if (e.covered) return { stroke: '#cbd5e1', opacity: 0.3, width: 1, dash: '4 6' };
-    if (e.processed) return { stroke: '#94a3b8', opacity: 0.5, width: 1.5, dash: '' };
-    return { stroke: '#475569', opacity: 0.7, width: 2, dash: '' };
+    if (e.active) return { stroke: '#e11d48', opacity: 1, width: 4, dash: '' };
+    if (e.covered) return { stroke: '#cbd5e1', opacity: 0.25, width: 1.5, dash: '5 7' };
+    if (e.processed) return { stroke: '#94a3b8', opacity: 0.45, width: 2, dash: '' };
+    return { stroke: '#1e293b', opacity: 0.8, width: 2.5, dash: '' };
   };
 
   const cursorClass =
@@ -294,53 +294,61 @@ export default function GraphCanvas({
                   cx={vertex.x} cy={vertex.y} r={r}
                   fill={vs.bodyFill}
                   stroke={vs.stroke}
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   filter={vs.shadow}
                 />
 
-                {/* Vertex label */}
+                {/* Vertex label — centered in node */}
                 <text
-                  x={vertex.x} y={vertex.y - 5}
+                  x={vertex.x} y={vertex.y + 1}
                   textAnchor="middle" dominantBaseline="middle"
-                  fontFamily="'Instrument Serif', serif"
-                  fontStyle="italic"
+                  fontFamily="'DM Sans', sans-serif"
                   fill={vs.textColor}
-                  fontSize={16}
-                  fontWeight={400}
+                  fontSize={18}
+                  fontWeight={700}
                   className="select-none pointer-events-none"
                 >
                   {vertex.id}
                 </text>
 
-                {/* Weight value */}
-                <text
-                  x={vertex.x} y={vertex.y + 11}
-                  textAnchor="middle" dominantBaseline="middle"
-                  fontFamily="'Fira Code', monospace"
-                  fill={vs.weightColor}
-                  fontSize={10}
-                  fontWeight={600}
-                  className="select-none pointer-events-none"
-                >
-                  {vertex.weight.toFixed(1)}
-                </text>
+                {/* Weight badge — prominent pill below vertex */}
+                <g>
+                  <rect
+                    x={vertex.x - 20} y={vertex.y + r + 4}
+                    width={40} height={22} rx={11}
+                    fill={vertex.inCover ? '#059669' : vertex.isZero ? '#d97706' : '#ffffff'}
+                    stroke={vertex.inCover ? '#047857' : vertex.isZero ? '#b45309' : '#334155'}
+                    strokeWidth={1.5}
+                  />
+                  <text
+                    x={vertex.x} y={vertex.y + r + 16}
+                    textAnchor="middle" dominantBaseline="middle"
+                    fontFamily="'Fira Code', monospace"
+                    fill={vertex.inCover ? '#ffffff' : vertex.isZero ? '#ffffff' : '#1e293b'}
+                    fontSize={12}
+                    fontWeight={700}
+                    className="select-none pointer-events-none"
+                  >
+                    {vertex.weight.toFixed(1)}
+                  </text>
+                </g>
 
                 {/* Original weight badge when reduced */}
                 {vertex.weight !== vertex.originalWeight && !vertex.inCover && (
                   <g>
                     <rect
-                      x={vertex.x + r + 3} y={vertex.y - r - 3}
-                      width={34} height={18} rx={9}
+                      x={vertex.x + r + 4} y={vertex.y - 10}
+                      width={40} height={20} rx={10}
                       fill="#fef3c7" stroke="#f59e0b" strokeWidth={1}
                     />
                     <text
-                      x={vertex.x + r + 20} y={vertex.y - r + 7}
+                      x={vertex.x + r + 24} y={vertex.y + 1}
                       textAnchor="middle" dominantBaseline="middle"
                       fontFamily="'Fira Code', monospace"
-                      fill="#92400e" fontSize={8} fontWeight={600}
+                      fill="#92400e" fontSize={9} fontWeight={600}
                       className="select-none pointer-events-none"
                     >
-                      w₀={vertex.originalWeight}
+                      was {vertex.originalWeight}
                     </text>
                   </g>
                 )}
