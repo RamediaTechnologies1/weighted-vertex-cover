@@ -2,8 +2,8 @@ import type { PresetGraph } from './types';
 
 export const presetGraphs: PresetGraph[] = [
   {
-    name: 'General Graph',
-    description: 'Simple 4-vertex graph — light A and C cover all edges, heavy B stays out',
+    name: 'General Graph 1',
+    description: 'Simple 4-vertex graph — light A and D cover all edges, heavy B stays out',
     graph: {
       vertices: [
         { id: 'A', x: 200, y: 140, weight: 3, originalWeight: 3, inCover: false, isZero: false },
@@ -17,6 +17,31 @@ export const presetGraphs: PresetGraph[] = [
         { id: 'e3', source: 'B', target: 'D', covered: false, active: false, processed: false },
         { id: 'e4', source: 'C', target: 'D', covered: false, active: false, processed: false },
         { id: 'e5', source: 'A', target: 'D', covered: false, active: false, processed: false },
+      ],
+    },
+  },
+  {
+    name: 'General Graph 2',
+    description: '6 vertices, 9 edges — heavy P(12) and Q(9) stay out, 4 light vertices cover everything',
+    graph: {
+      vertices: [
+        { id: 'P', x: 120, y: 250, weight: 12, originalWeight: 12, inCover: false, isZero: false },
+        { id: 'A', x: 300, y: 100, weight: 3, originalWeight: 3, inCover: false, isZero: false },
+        { id: 'B', x: 300, y: 400, weight: 2, originalWeight: 2, inCover: false, isZero: false },
+        { id: 'Q', x: 500, y: 250, weight: 9, originalWeight: 9, inCover: false, isZero: false },
+        { id: 'C', x: 650, y: 100, weight: 4, originalWeight: 4, inCover: false, isZero: false },
+        { id: 'D', x: 650, y: 400, weight: 1, originalWeight: 1, inCover: false, isZero: false },
+      ],
+      edges: [
+        { id: 'e1', source: 'P', target: 'A', covered: false, active: false, processed: false },
+        { id: 'e2', source: 'P', target: 'B', covered: false, active: false, processed: false },
+        { id: 'e3', source: 'A', target: 'B', covered: false, active: false, processed: false },
+        { id: 'e4', source: 'A', target: 'Q', covered: false, active: false, processed: false },
+        { id: 'e5', source: 'B', target: 'Q', covered: false, active: false, processed: false },
+        { id: 'e6', source: 'Q', target: 'C', covered: false, active: false, processed: false },
+        { id: 'e7', source: 'Q', target: 'D', covered: false, active: false, processed: false },
+        { id: 'e8', source: 'C', target: 'D', covered: false, active: false, processed: false },
+        { id: 'e9', source: 'B', target: 'D', covered: false, active: false, processed: false },
       ],
     },
   },
