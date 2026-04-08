@@ -1,0 +1,123 @@
+Ramesh Pimentel
+Advanced Algorithms
+Weighted Vertex Cover — Local Ratio Method
+
+Live Application: https://weighted-vertex-cover.vercel.app
+Source Code: https://github.com/RamediaTechnologies1/weighted-vertex-cover
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+The Weighted Vertex Cover problem is a classical NP-hard optimization problem in
+graph theory. Given an undirected graph G = (V, E) where each vertex v has a
+non-negative weight w(v), the goal is to find a subset S of vertices such that
+every edge in G has at least one endpoint in S, and the total weight of S is
+minimized. This problem has applications in network security, facility location,
+and resource allocation.
+
+Because Weighted Vertex Cover is NP-hard, no polynomial-time algorithm is known
+to find an exact optimal solution. However, the Local Ratio technique provides a
+2-approximation algorithm, meaning the solution it produces has a total weight at
+most twice the weight of the optimal solution. This guarantee makes the Local
+Ratio method both theoretically important and practically useful.
+
+This project implements an interactive, step-by-step visualization of the Local
+Ratio weight reduction method for Weighted Vertex Cover. The tool is designed as
+a classroom demonstration that makes the algorithm's behavior visible and
+intuitive.
+
+================================================================================
+2. THE LOCAL RATIO METHOD
+================================================================================
+
+The Local Ratio technique, introduced by Bar-Yehuda and Even (1981), operates
+through iterative weight reduction. The algorithm proceeds as follows:
+
+Step 1 — Select an Uncovered Edge: Pick any edge (u, v) where neither endpoint
+is currently in the cover.
+
+Step 2 — Compute Epsilon: Set epsilon = min(w(u), w(v)), the smaller of the two
+endpoint weights.
+
+Step 3 — Reduce Weights: Subtract epsilon from both w(u) and w(v). This is the
+"local ratio" reduction — it simultaneously reduces weight on both endpoints by
+the same amount.
+
+Step 4 — Add Zero-Weight Vertices: Any vertex whose weight reaches zero is added
+to the vertex cover. All edges incident to that vertex are now considered
+covered.
+
+Step 5 — Repeat: Continue until all edges are covered.
+
+The key insight is that at least one endpoint of the selected edge must reach
+zero (the lighter one), guaranteeing progress. The 2-approximation ratio follows
+from the observation that for every edge processed, at most 2 * epsilon weight is
+added to the cover, while at least epsilon must be paid by any optimal solution
+(since at least one endpoint must be covered).
+
+================================================================================
+3. VISUALIZATION FEATURES
+================================================================================
+
+The application provides a complete interactive environment for exploring the
+algorithm:
+
+Graph Editor: Users can create custom graphs by placing vertices, drawing edges,
+and assigning weights using a slider (0.5 to 20). Vertices are draggable for
+layout adjustments. A delete mode allows removing vertices and edges.
+
+Preset Graphs: Four preset examples demonstrate different algorithm behaviors:
+  - General Graph: A simple 4-vertex graph where heavy vertex B(10) stays out
+    of the cover while light vertices A(3), C(4), D(2) are selected.
+  - Triangle Path: A triangle connected to a path showing density differences.
+  - Star Graph: A central hub where the center covers all edges optimally.
+  - Bipartite Chain: Weight asymmetry affecting vertex selection order.
+
+Random Graph Generator: Users can generate random connected graphs with 3 to 15
+vertices. The generator deliberately creates a mix of heavy vertices (weight
+8-15) and light vertices (weight 1-4), ensuring that approximately 30% of
+vertices remain outside the final cover. This produces more interesting and
+realistic algorithm demonstrations.
+
+Step-by-Step Execution: The algorithm trace panel shows each operation in
+sequence — edge selection (highlighted in red), epsilon computation, weight
+reduction, zero-weight detection, and edge coverage. Users navigate forward and
+backward through steps using Next/Prev buttons, or click any step in the
+timeline to jump directly to it.
+
+Visual Encoding: Dark slate nodes on a white canvas provide high contrast.
+Weight pills below each vertex show the current weight in bold monospace font.
+When a vertex's weight is reduced, an amber "was X" badge shows the original
+value. Cover vertices turn emerald green with a checkmark badge. Covered edges
+fade to dashed lines.
+
+================================================================================
+4. TECHNICAL IMPLEMENTATION
+================================================================================
+
+The application is built with React 19 and TypeScript, using Vite as the build
+tool. Tailwind CSS v4 handles styling with a custom theme. Framer Motion provides
+smooth animations for vertex/edge transitions and step changes. The graph is
+rendered as an SVG canvas with interactive mouse event handling for dragging,
+clicking, and drawing edges.
+
+The algorithm implementation in algorithm.ts generates a complete sequence of
+immutable state snapshots (AlgorithmStep objects), each containing a deep clone
+of the graph at that point. This allows arbitrary navigation through the
+algorithm's execution without re-running any computation.
+
+The application is deployed on Vercel with automatic builds from the GitHub
+repository.
+
+================================================================================
+5. CONCLUSION
+================================================================================
+
+This visualization makes the Local Ratio method for Weighted Vertex Cover
+accessible and intuitive. By showing each weight reduction, zero-weight
+detection, and edge coverage event as a discrete visual step, students can
+develop a concrete understanding of how the approximation algorithm works and why
+it achieves its 2-approximation guarantee. The ability to create custom graphs
+and generate random instances encourages experimentation and deeper engagement
+with the algorithm's behavior across different graph structures.
