@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Play, RotateCcw, ChevronRight, ChevronLeft, MousePointer2,
-  Plus, Link, Trash2, Layers, Hexagon
+  Plus, Link, Trash2, Layers, Hexagon, Shuffle
 } from 'lucide-react';
 import type { EditorMode, Graph } from '../types';
 import { presetGraphs } from '../presets';
@@ -16,6 +17,7 @@ interface Props {
   onPrevStep: () => void;
   onLoadPreset: (index: number) => void;
   onClearGraph: () => void;
+  onGenerateRandom: (vertexCount: number) => void;
   currentStep: number;
   totalSteps: number;
   selectedVertex: string | null;
@@ -41,6 +43,7 @@ export default function ControlPanel({
   onPrevStep,
   onLoadPreset,
   onClearGraph,
+  onGenerateRandom,
   currentStep,
   totalSteps,
   selectedVertex,
@@ -48,6 +51,7 @@ export default function ControlPanel({
   onWeightChange,
 }: Props) {
   const selectedV = graph.vertices.find(v => v.id === selectedVertex);
+  const [randomCount, setRandomCount] = useState(6);
 
   return (
     <motion.aside
@@ -81,6 +85,48 @@ export default function ControlPanel({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Random Graph Generator */}
+      <div className="p-4 pb-3 border-b border-glass-border">
+        <div className="flex items-center gap-2 mb-3">
+          <Shuffle className="w-3.5 h-3.5 text-star" />
+          <span className="text-[10px] font-mono font-medium text-star tracking-[0.2em] uppercase">
+            Random Graph
+          </span>
+        </div>
+        <div className="flex items-center gap-2 mb-2.5">
+          <label className="text-[11px] font-accent italic text-muted whitespace-nowrap">Vertices</label>
+          <input
+            type="number"
+            min={3}
+            max={15}
+            value={randomCount}
+            onChange={e => {
+              const v = parseInt(e.target.value);
+              if (v >= 3 && v <= 15) setRandomCount(v);
+            }}
+            disabled={isRunning}
+            className="w-16 px-2.5 py-1.5 rounded-lg bg-deep border border-glass-border text-bright text-sm font-mono text-center focus:outline-none focus:border-star/30 focus:ring-1 focus:ring-star/10 transition-all duration-300 disabled:opacity-30"
+          />
+          <input
+            type="range"
+            min={3}
+            max={15}
+            value={randomCount}
+            onChange={e => setRandomCount(parseInt(e.target.value))}
+            disabled={isRunning}
+            className="flex-1"
+          />
+        </div>
+        <button
+          onClick={() => onGenerateRandom(randomCount)}
+          disabled={isRunning}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-b from-star/[0.12] to-star/[0.04] border border-star/20 text-star font-body font-semibold text-[12px] tracking-wide hover:from-star/[0.2] hover:to-star/[0.08] transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed group"
+        >
+          <Shuffle className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500" />
+          Generate Random
+        </button>
       </div>
 
       {/* Editor tools */}
@@ -180,7 +226,6 @@ export default function ControlPanel({
           </button>
         ) : (
           <div className="space-y-3">
-            {/* Progress */}
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono text-muted">
                 Step {currentStep + 1} of {totalSteps}
@@ -195,7 +240,6 @@ export default function ControlPanel({
               />
             </div>
 
-            {/* Navigation buttons */}
             <div className="flex gap-2">
               <button
                 onClick={onPrevStep}

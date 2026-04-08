@@ -172,6 +172,76 @@ function App() {
     setEdgeStart(null);
   }, []);
 
+  const handleGenerateRandom = useCallback((vertexCount: number) => {
+    const padding = 80;
+    const canvasW = 700;
+    const canvasH = 500;
+
+    // Place vertices in a force-directed-ish layout (circular with jitter)
+    const vertices = [];
+    const cx = canvasW / 2 + padding / 2;
+    const cy = canvasH / 2 + padding / 2;
+    const radius = Math.min(canvasW, canvasH) * 0.35;
+
+    for (let i = 0; i < vertexCount; i++) {
+      const angle = (2 * Math.PI * i) / vertexCount - Math.PI / 2;
+      const jitterX = (Math.random() - 0.5) * 60;
+      const jitterY = (Math.random() - 0.5) * 60;
+      const x = cx + Math.cos(angle) * radius + jitterX;
+      const y = cy + Math.sin(angle) * radius + jitterY;
+      const weight = Math.round((Math.random() * 9 + 1) * 2) / 2; // 0.5 to 10, step 0.5
+
+      vertices.push({
+        id: String.fromCharCode(65 + i), // A, B, C, ...
+        x, y,
+        weight,
+        originalWeight: weight,
+        inCover: false,
+        isZero: false,
+      });
+    }
+
+    // Generate edges: ensure connected graph, then add random extras
+    const edges: Graph['edges'] = [];
+    let edgeId = 0;
+
+    // Step 1: create a spanning path to guarantee connectivity
+    const shuffled = [...Array(vertexCount).keys()].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < shuffled.length - 1; i++) {
+      edges.push({
+        id: `e${edgeId++}`,
+        source: vertices[shuffled[i]].id,
+        target: vertices[shuffled[i + 1]].id,
+        covered: false, active: false, processed: false,
+      });
+    }
+
+    // Step 2: add random extra edges (probability ~40% per remaining pair)
+    const edgeSet = new Set(edges.map(e => [e.source, e.target].sort().join('-')));
+    for (let i = 0; i < vertexCount; i++) {
+      for (let j = i + 1; j < vertexCount; j++) {
+        const key = [vertices[i].id, vertices[j].id].sort().join('-');
+        if (!edgeSet.has(key) && Math.random() < 0.35) {
+          edgeSet.add(key);
+          edges.push({
+            id: `e${edgeId++}`,
+            source: vertices[i].id,
+            target: vertices[j].id,
+            covered: false, active: false, processed: false,
+          });
+        }
+      }
+    }
+
+    setGraph({ vertices, edges });
+    setSteps([]);
+    setCurrentStep(-1);
+    setIsRunning(false);
+    setSelectedVertex(null);
+    setEdgeStart(null);
+    nextId.current = vertexCount + 1;
+  }, []);
+
   return (
     <div className="h-screen w-screen flex flex-col bg-void overflow-hidden grain">
       <Header />
@@ -186,6 +256,7 @@ function App() {
           onPrevStep={handlePrevStep}
           onLoadPreset={handleLoadPreset}
           onClearGraph={handleClearGraph}
+          onGenerateRandom={handleGenerateRandom}
           currentStep={currentStep}
           totalSteps={steps.length}
           selectedVertex={selectedVertex}

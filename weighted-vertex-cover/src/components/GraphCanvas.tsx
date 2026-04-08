@@ -83,27 +83,36 @@ export default function GraphCanvas({
 
   const getVertexStyle = (v: typeof graph.vertices[0]) => {
     if (v.inCover) return {
-      fill: '#34d399', stroke: '#34d399',
-      glowColor: 'rgba(52,211,153,0.6)', filterId: 'glow-emerald',
-      ringColor: 'rgba(52,211,153,0.15)',
+      bodyFill: '#059669',
+      stroke: '#047857',
+      textColor: '#ffffff',
+      weightColor: '#d1fae5',
+      badgeFill: '#10b981',
+      shadow: 'url(#shadow-emerald)',
     };
     if (v.isZero) return {
-      fill: '#f5c842', stroke: '#f5c842',
-      glowColor: 'rgba(245,200,66,0.5)', filterId: 'glow-star',
-      ringColor: 'rgba(245,200,66,0.1)',
+      bodyFill: '#d97706',
+      stroke: '#b45309',
+      textColor: '#ffffff',
+      weightColor: '#fef3c7',
+      badgeFill: '#f59e0b',
+      shadow: 'url(#shadow-amber)',
     };
     return {
-      fill: '#2dd4bf', stroke: '#2dd4bf',
-      glowColor: 'rgba(45,212,191,0.4)', filterId: 'glow-teal',
-      ringColor: 'rgba(45,212,191,0.06)',
+      bodyFill: '#1e293b',
+      stroke: '#334155',
+      textColor: '#f8fafc',
+      weightColor: '#94a3b8',
+      badgeFill: '#475569',
+      shadow: 'url(#shadow-default)',
     };
   };
 
   const getEdgeStyle = (e: typeof graph.edges[0]) => {
-    if (e.active) return { stroke: '#f43f5e', opacity: 1, width: 3, dash: '' };
-    if (e.covered) return { stroke: '#3d5280', opacity: 0.15, width: 1, dash: '4 6' };
-    if (e.processed) return { stroke: '#6880aa', opacity: 0.35, width: 1.5, dash: '' };
-    return { stroke: '#3d5280', opacity: 0.55, width: 1.5, dash: '' };
+    if (e.active) return { stroke: '#e11d48', opacity: 1, width: 3.5, dash: '' };
+    if (e.covered) return { stroke: '#cbd5e1', opacity: 0.3, width: 1, dash: '4 6' };
+    if (e.processed) return { stroke: '#94a3b8', opacity: 0.5, width: 1.5, dash: '' };
+    return { stroke: '#475569', opacity: 0.7, width: 2, dash: '' };
   };
 
   const cursorClass =
@@ -113,12 +122,18 @@ export default function GraphCanvas({
     dragging ? 'cursor-grabbing' : 'cursor-default';
 
   return (
-    <div className="w-full h-full relative overflow-hidden constellation-bg">
-      {/* Atmospheric orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[15%] left-[20%] w-[500px] h-[500px] bg-teal/[0.015] rounded-full blur-[120px] animate-drift" />
-        <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] bg-star/[0.01] rounded-full blur-[100px] animate-drift" style={{ animationDelay: '-3s' }} />
-        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet/[0.008] rounded-full blur-[140px]" />
+    <div className="w-full h-full relative overflow-hidden">
+      {/* White canvas background with subtle grid */}
+      <div className="absolute inset-3 rounded-2xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_4px_24px_rgba(0,0,0,0.08)] overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle, #e2e8f0 1px, transparent 1px)
+            `,
+            backgroundSize: '24px 24px',
+          }}
+        />
       </div>
 
       <svg
@@ -131,37 +146,19 @@ export default function GraphCanvas({
         onClick={handleCanvasClick}
       >
         <defs>
-          {/* Glow filters */}
-          <filter id="glow-teal" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feColorMatrix in="blur" values="0 0 0 0 0.18  0 0 0 0 0.83  0 0 0 0 0.75  0 0 0 0.5 0" />
-            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+          {/* Drop shadows for light background */}
+          <filter id="shadow-default" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#1e293b" floodOpacity="0.25" />
           </filter>
-          <filter id="glow-emerald" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix in="blur" values="0 0 0 0 0.2  0 0 0 0 0.83  0 0 0 0 0.6  0 0 0 0.6 0" />
-            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+          <filter id="shadow-emerald" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="6" floodColor="#059669" floodOpacity="0.35" />
           </filter>
-          <filter id="glow-star" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feColorMatrix in="blur" values="0 0 0 0 0.96  0 0 0 0 0.78  0 0 0 0 0.26  0 0 0 0.55 0" />
-            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+          <filter id="shadow-amber" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="6" floodColor="#d97706" floodOpacity="0.35" />
           </filter>
-          <filter id="glow-rose" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feColorMatrix in="blur" values="0 0 0 0 0.96  0 0 0 0 0.25  0 0 0 0 0.37  0 0 0 0.55 0" />
-            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+          <filter id="shadow-rose" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="6" floodColor="#e11d48" floodOpacity="0.3" />
           </filter>
-          {/* Soft drop shadow for vertex bodies */}
-          <filter id="vertex-shadow" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="0" dy="2" stdDeviation="6" floodColor="#000" floodOpacity="0.4" />
-          </filter>
-          {/* Edge gradient for depth */}
-          <linearGradient id="edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#3d5280" stopOpacity="0.2" />
-            <stop offset="50%" stopColor="#3d5280" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#3d5280" stopOpacity="0.2" />
-          </linearGradient>
         </defs>
 
         {/* Background hit area */}
@@ -175,10 +172,10 @@ export default function GraphCanvas({
             <line
               x1={startV.x} y1={startV.y}
               x2={mousePos.x} y2={mousePos.y}
-              stroke="#2dd4bf"
-              strokeWidth={1.5}
+              stroke="#64748b"
+              strokeWidth={2}
               strokeDasharray="6 6"
-              opacity={0.4}
+              opacity={0.5}
             />
           );
         })()}
@@ -203,24 +200,16 @@ export default function GraphCanvas({
                   />
                 )}
 
-                {/* Active edge aura */}
+                {/* Active edge glow */}
                 {edge.active && (
                   <>
                     <motion.line
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: [0.1, 0.4, 0.1] }}
+                      animate={{ opacity: [0.1, 0.3, 0.1] }}
                       transition={{ duration: 1.2, repeat: Infinity }}
                       x1={src.x} y1={src.y} x2={tgt.x} y2={tgt.y}
-                      stroke="#f43f5e" strokeWidth={12} strokeLinecap="round"
-                      filter="url(#glow-rose)" opacity={0.2}
-                    />
-                    <motion.line
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0.2, 0.6, 0.2] }}
-                      transition={{ duration: 1.2, repeat: Infinity }}
-                      x1={src.x} y1={src.y} x2={tgt.x} y2={tgt.y}
-                      stroke="#f43f5e" strokeWidth={5} strokeLinecap="round"
-                      opacity={0.4}
+                      stroke="#e11d48" strokeWidth={10} strokeLinecap="round"
+                      filter="url(#shadow-rose)" opacity={0.15}
                     />
                   </>
                 )}
@@ -235,7 +224,7 @@ export default function GraphCanvas({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: style.opacity }}
                   transition={{ duration: 0.5 }}
-                  filter={edge.active ? 'url(#glow-rose)' : undefined}
+                  filter={edge.active ? 'url(#shadow-rose)' : undefined}
                 />
               </motion.g>
             );
@@ -263,49 +252,39 @@ export default function GraphCanvas({
                 style={{ cursor: isRunning ? 'default' : editorMode === 'select' ? 'grab' : 'pointer' }}
                 onMouseDown={(e) => handleMouseDown(e, vertex.id)}
               >
-                {/* Outer orbital ring for cover vertices */}
+                {/* Cover vertex outer ring */}
                 {vertex.inCover && (
-                  <>
-                    <motion.circle
-                      cx={vertex.x} cy={vertex.y} r={r + 14}
-                      fill="none" stroke={vs.stroke} strokeWidth={0.5}
-                      strokeDasharray="3 8"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.4, rotate: 360 }}
-                      transition={{ opacity: { duration: 0.5 }, rotate: { duration: 30, repeat: Infinity, ease: 'linear' } }}
-                      style={{ transformOrigin: `${vertex.x}px ${vertex.y}px` }}
-                    />
-                    <motion.circle
-                      cx={vertex.x} cy={vertex.y} r={r + 8}
-                      fill="none" stroke={vs.stroke} strokeWidth={0.8}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: [0.15, 0.35, 0.15] }}
-                      transition={{ duration: 2.5, repeat: Infinity }}
-                    />
-                  </>
+                  <motion.circle
+                    cx={vertex.x} cy={vertex.y} r={r + 8}
+                    fill="none" stroke="#10b981" strokeWidth={2}
+                    strokeDasharray="4 4"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
                 )}
 
                 {/* Selection ring */}
                 {(isSelected || isEdgeEndpoint) && (
                   <motion.circle
-                    cx={vertex.x} cy={vertex.y} r={r + 8}
-                    fill="none" stroke="#6880aa" strokeWidth={1}
+                    cx={vertex.x} cy={vertex.y} r={r + 6}
+                    fill="none" stroke="#3b82f6" strokeWidth={2}
                     strokeDasharray="4 4"
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.6 }}
+                    animate={{ opacity: 0.7 }}
                   />
                 )}
 
-                {/* Weight depletion ring (shows remaining weight visually) */}
+                {/* Weight depletion ring */}
                 {vertex.weight !== vertex.originalWeight && !vertex.inCover && (
                   <circle
                     cx={vertex.x} cy={vertex.y} r={r + 4}
                     fill="none"
-                    stroke={vs.stroke}
-                    strokeWidth={2}
+                    stroke="#d97706"
+                    strokeWidth={2.5}
                     strokeDasharray={`${weightRatio * 2 * Math.PI * (r + 4)} ${2 * Math.PI * (r + 4)}`}
                     strokeDashoffset={2 * Math.PI * (r + 4) * 0.25}
-                    opacity={0.3}
+                    opacity={0.5}
                     strokeLinecap="round"
                   />
                 )}
@@ -313,23 +292,10 @@ export default function GraphCanvas({
                 {/* Main vertex body */}
                 <circle
                   cx={vertex.x} cy={vertex.y} r={r}
-                  fill="#0c1225"
+                  fill={vs.bodyFill}
                   stroke={vs.stroke}
-                  strokeWidth={vertex.inCover ? 2 : 1.2}
-                  filter={`url(#${vs.filterId})`}
-                />
-
-                {/* Inner radial fill */}
-                <circle
-                  cx={vertex.x} cy={vertex.y} r={r - 1.5}
-                  fill={`${vs.fill}08`}
-                />
-
-                {/* Core glow dot */}
-                <circle
-                  cx={vertex.x} cy={vertex.y} r={3}
-                  fill={vs.fill}
-                  opacity={vertex.inCover ? 0.8 : 0.2}
+                  strokeWidth={2}
+                  filter={vs.shadow}
                 />
 
                 {/* Vertex label */}
@@ -338,8 +304,8 @@ export default function GraphCanvas({
                   textAnchor="middle" dominantBaseline="middle"
                   fontFamily="'Instrument Serif', serif"
                   fontStyle="italic"
-                  fill={vs.fill}
-                  fontSize={15}
+                  fill={vs.textColor}
+                  fontSize={16}
                   fontWeight={400}
                   className="select-none pointer-events-none"
                 >
@@ -351,9 +317,9 @@ export default function GraphCanvas({
                   x={vertex.x} y={vertex.y + 11}
                   textAnchor="middle" dominantBaseline="middle"
                   fontFamily="'Fira Code', monospace"
-                  fill={vertex.isZero ? '#f5c842' : vertex.inCover ? '#34d399' : '#b8c8e8'}
+                  fill={vs.weightColor}
                   fontSize={10}
-                  fontWeight={500}
+                  fontWeight={600}
                   className="select-none pointer-events-none"
                 >
                   {vertex.weight.toFixed(1)}
@@ -363,18 +329,18 @@ export default function GraphCanvas({
                 {vertex.weight !== vertex.originalWeight && !vertex.inCover && (
                   <g>
                     <rect
-                      x={vertex.x + r + 2} y={vertex.y - r - 2}
-                      width={32} height={16} rx={8}
-                      fill="#0c1225" stroke="#3d5280" strokeWidth={0.5}
+                      x={vertex.x + r + 3} y={vertex.y - r - 3}
+                      width={34} height={18} rx={9}
+                      fill="#fef3c7" stroke="#f59e0b" strokeWidth={1}
                     />
                     <text
-                      x={vertex.x + r + 18} y={vertex.y - r + 7}
+                      x={vertex.x + r + 20} y={vertex.y - r + 7}
                       textAnchor="middle" dominantBaseline="middle"
                       fontFamily="'Fira Code', monospace"
-                      fill="#6880aa" fontSize={8}
+                      fill="#92400e" fontSize={8} fontWeight={600}
                       className="select-none pointer-events-none"
                     >
-                      was {vertex.originalWeight}
+                      w₀={vertex.originalWeight}
                     </text>
                   </g>
                 )}
@@ -387,13 +353,13 @@ export default function GraphCanvas({
                     transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
                   >
                     <circle
-                      cx={vertex.x + r - 2} cy={vertex.y - r + 2}
-                      r={9} fill="#34d399"
+                      cx={vertex.x + r - 4} cy={vertex.y - r + 4}
+                      r={10} fill="#10b981" stroke="#ffffff" strokeWidth={2}
                     />
                     <text
-                      x={vertex.x + r - 2} y={vertex.y - r + 3}
+                      x={vertex.x + r - 4} y={vertex.y - r + 5}
                       textAnchor="middle" dominantBaseline="middle"
-                      fill="#06080f" fontSize={10} fontWeight={800}
+                      fill="#ffffff" fontSize={11} fontWeight={800}
                       className="select-none pointer-events-none"
                     >
                       ✓
@@ -413,7 +379,7 @@ export default function GraphCanvas({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="absolute bottom-5 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full glass-panel text-teal text-xs font-mono tracking-wide"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full bg-slate-800 text-white text-xs font-mono tracking-wide shadow-lg"
           >
             Click anywhere to place a vertex
           </motion.div>
@@ -423,7 +389,7 @@ export default function GraphCanvas({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="absolute bottom-5 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full glass-panel text-teal text-xs font-mono tracking-wide"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full bg-slate-800 text-white text-xs font-mono tracking-wide shadow-lg"
           >
             Click another vertex to complete the edge
           </motion.div>
@@ -433,7 +399,7 @@ export default function GraphCanvas({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="absolute bottom-5 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full glass-panel text-rose text-xs font-mono tracking-wide"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full bg-rose-700 text-white text-xs font-mono tracking-wide shadow-lg"
           >
             Click a vertex or edge to remove it
           </motion.div>
