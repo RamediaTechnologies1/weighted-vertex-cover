@@ -177,8 +177,16 @@ function App() {
     const canvasW = 700;
     const canvasH = 500;
 
-    // Place vertices in a force-directed-ish layout (circular with jitter)
-    const vertices = [];
+    // Designate ~30% of vertices as "heavy" (won't be picked by algorithm)
+    // and the rest as "light" (will reach zero and join cover)
+    const heavyCount = Math.max(1, Math.floor(vertexCount * 0.3));
+    const heavyIndices = new Set<number>();
+    while (heavyIndices.size < heavyCount) {
+      heavyIndices.add(Math.floor(Math.random() * vertexCount));
+    }
+
+    // Place vertices in circular layout with jitter
+    const vertices: Graph['vertices'] = [];
     const cx = canvasW / 2 + padding / 2;
     const cy = canvasH / 2 + padding / 2;
     const radius = Math.min(canvasW, canvasH) * 0.35;
@@ -189,10 +197,14 @@ function App() {
       const jitterY = (Math.random() - 0.5) * 60;
       const x = cx + Math.cos(angle) * radius + jitterX;
       const y = cy + Math.sin(angle) * radius + jitterY;
-      const weight = Math.round((Math.random() * 9 + 1) * 2) / 2; // 0.5 to 10, step 0.5
+
+      // Heavy vertices get weight 8-15, light ones get 1-4
+      const weight = heavyIndices.has(i)
+        ? Math.round((Math.random() * 7 + 8) * 2) / 2   // 8 to 15
+        : Math.round((Math.random() * 3 + 1) * 2) / 2;  // 1 to 4
 
       vertices.push({
-        id: String.fromCharCode(65 + i), // A, B, C, ...
+        id: String.fromCharCode(65 + i),
         x, y,
         weight,
         originalWeight: weight,
@@ -201,34 +213,54 @@ function App() {
       });
     }
 
-    // Generate edges: ensure connected graph, then add random extras
+    // Generate edges: heavy vertices connect primarily to light ones
+    // so the light neighbors reach zero and cover the heavy vertices' edges
     const edges: Graph['edges'] = [];
     let edgeId = 0;
+    const edgeSet = new Set<string>();
 
-    // Step 1: create a spanning path to guarantee connectivity
-    const shuffled = [...Array(vertexCount).keys()].sort(() => Math.random() - 0.5);
-    for (let i = 0; i < shuffled.length - 1; i++) {
-      edges.push({
-        id: `e${edgeId++}`,
-        source: vertices[shuffled[i]].id,
-        target: vertices[shuffled[i + 1]].id,
-        covered: false, active: false, processed: false,
-      });
+    const addEdge = (i: number, j: number) => {
+      const key = [vertices[i].id, vertices[j].id].sort().join('-');
+      if (!edgeSet.has(key)) {
+        edgeSet.add(key);
+        edges.push({
+          id: `e${edgeId++}`,
+          source: vertices[i].id,
+          target: vertices[j].id,
+          covered: false, active: false, processed: false,
+        });
+      }
+    };
+
+    // Step 1: ensure every heavy vertex connects to at least 2 light vertices
+    const lightIndices = [...Array(vertexCount).keys()].filter(i => !heavyIndices.has(i));
+    for (const hi of heavyIndices) {
+      const shuffledLight = [...lightIndices].sort(() => Math.random() - 0.5);
+      const connectCount = Math.min(shuffledLight.length, 2 + Math.floor(Math.random() * 2));
+      for (let k = 0; k < connectCount; k++) {
+        addEdge(hi, shuffledLight[k]);
+      }
     }
 
-    // Step 2: add random extra edges (probability ~40% per remaining pair)
-    const edgeSet = new Set(edges.map(e => [e.source, e.target].sort().join('-')));
-    for (let i = 0; i < vertexCount; i++) {
-      for (let j = i + 1; j < vertexCount; j++) {
-        const key = [vertices[i].id, vertices[j].id].sort().join('-');
-        if (!edgeSet.has(key) && Math.random() < 0.35) {
-          edgeSet.add(key);
-          edges.push({
-            id: `e${edgeId++}`,
-            source: vertices[i].id,
-            target: vertices[j].id,
-            covered: false, active: false, processed: false,
-          });
+    // Step 2: spanning path among light vertices for connectivity
+    const shuffledLight = [...lightIndices].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < shuffledLight.length - 1; i++) {
+      addEdge(shuffledLight[i], shuffledLight[i + 1]);
+    }
+
+    // Step 3: connect any isolated heavy vertices to the light spanning path
+    for (const hi of heavyIndices) {
+      const hasEdge = edges.some(e => e.source === vertices[hi].id || e.target === vertices[hi].id);
+      if (!hasEdge && lightIndices.length > 0) {
+        addEdge(hi, lightIndices[Math.floor(Math.random() * lightIndices.length)]);
+      }
+    }
+
+    // Step 4: add a few random light-light edges for variety
+    for (let i = 0; i < lightIndices.length; i++) {
+      for (let j = i + 1; j < lightIndices.length; j++) {
+        if (Math.random() < 0.25) {
+          addEdge(lightIndices[i], lightIndices[j]);
         }
       }
     }
